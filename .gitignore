@@ -1,0 +1,15 @@
+
+# ignore terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+.terraform*
+
+# ignore any vi editor generated swap files
+*.swp
+
+# ignore pytest generated files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
