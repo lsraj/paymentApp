@@ -113,7 +113,7 @@ def get_customer(event, context):
     except ClientError as e:
             return {
                 'statusCode': 500,
-                'body': json.dumps({'message' : f'error occurred: {e.response['Error']['Message']}'})
+                'body': json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
             }
 
  
@@ -151,7 +151,7 @@ def process_payment(event, context):
     except ClientError as e:
         return {
             'statusCode': 500,
-            'body': json.dumps({'message' : f'error occurred: {e.response['Error']['Message']}'})
+            'body': json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
         }
 
     access_token = get_access_token()
@@ -249,7 +249,7 @@ def get_access_token():
         auth=(paypal_client_id, paypal_secret)
     )
 
-    if response.status_code == 200:
+    if response.status_code in [200, 201]:
         access_token = response.json()['access_token']
         return access_token
     else:
