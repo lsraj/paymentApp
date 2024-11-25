@@ -1,0 +1,19 @@
+{
+  "resource": "/v1/api/customer",
+  "path": "/v1/api/customer",
+  "httpMethod": "POST",
+  "body": "{\"customer_id\": \"user3\", \"email\": \"user3@example.com\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "accountId": "123456789012",
+    "resourceId": "abcd1234",
+    "stage": "dev",
+    "requestId": "abc123xyz",
+    "identity": {
+      "sourceIp": "127.0.0.1"
+    },
+    "authorizer": {
+      "principalId": "user"
+    }
+  }
+}

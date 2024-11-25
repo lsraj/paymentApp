@@ -1,0 +1,18 @@
+
+{
+  "resource": "/v1/api/payments",
+  "path": "/v1/api/payments",
+  "httpMethod": "POST",
+  "body": "{\"customer_id\": \"user4\", \"email\": \"cuser2@example.com\", \"amount\": 200.5, \"currency\": \"USD\"}",
+  "isBase64Encoded": false,
+  "requestContext": {
+    "accountId": "123456789012",
+    "resourceId": "abcd1234",
+    "stage": "dev",
+    "requestId": "abc123xyz",
+    "identity": {
+      "sourceIp": "127.0.0.1"
+    }
+  }
+}
+

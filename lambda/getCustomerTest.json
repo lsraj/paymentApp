@@ -1,0 +1,18 @@
+{
+  "resource": "/v1/api/customer/{customer_id}",
+  "path": "/v1/api/customer/user3",
+  "httpMethod": "GET",
+  "pathParameters": {
+    "customer_id": "user3"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "resourceId": "abcd1234",
+    "stage": "dev",
+    "requestId": "abc123xyz",
+    "identity": {
+      "sourceIp": "127.0.0.1"
+    }
+  }
+}
+

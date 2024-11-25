@@ -1,0 +1,20 @@
+
+aws lambda list-functions
+aws lambda update-function-code --function-name PaymentFunc --zip-file fileb://paymentApp-lambda.zip
+aws lambda update-function-configuration --function-name PaymentFunc --environment "Variables={PAYPAL_SANDBOX_URL="https://api.sandbox.paypal.com",PAYPAL_CLIENT_ID='<ID>',PAYPAL_SECRET='<SECRET>'}"
+aws lambda get-function --function-name PaymentFunc
+aws lambda invoke --function-name PaymentFunc --payload fileb://getCustomerTest.json output.txt
+
+The default 3 seconds timeout is insufficient to connect to paypal sandbox. I raised it to 60 seconds just in case.
+
+check Handler in Lambda Fuction. If the handler is lambda_function.lambda_handler, then your lamda code should
+be in lamda_fuction.py with lambda_handler() defined.
+
+pip install -r requirements.txt -t package/
+cp lambda_function.py package/
+cd package
+zip -r ../paymentApp-lambda.zip .
+cd ..
+
+jq . getCustomerTest.json 
+aws dynamodb get-item --table-name Customers --key '{"customer_id": {"S": "user1"}}'
