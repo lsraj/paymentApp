@@ -123,24 +123,24 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
 
 ```
 $ cd lambda
-$ cat build_lambda_zip.sh 
-#
-# Run this from the dir where lambda_function.py is
-#
-pip install -r requirements.txt -t package/
-cp lambda_function.py package/
-cd package && zip -r9 ../paymentApp-lambda.zip . && cd ..
-rm -rf package
+$ cat build_lambda_zip.sh  
+  #
+  # Run this from the dir where lambda_function.py is
+  #
+  pip install -r requirements.txt -t package/
+  cp lambda_function.py package/
+  cd package && zip -r9 ../paymentApp-lambda.zip . && cd ..
+  rm -rf package
 $
 $
 $ cat requirements.txt 
-requests==2.31.0
-boto3==1.35.68
-botocore==1.35.68
+   requests==2.31.0
+   boto3==1.35.68
+   botocore==1.35.68
 $
 $ ./build_lambda_zip.sh 
 $ ls paymentApp-lambda.zip 
-paymentApp-lambda.zip
+   paymentApp-lambda.zip
 $
 $
 $ cd ../deply/aws/
@@ -148,6 +148,7 @@ $ terraform init
 $ terraform plan -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
 $ terraform apply -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
 $
+```
 
 Note: There is no need to pass these variables after these keys are stored in AWS Secret Manager. TBD.
 
