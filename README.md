@@ -54,10 +54,47 @@ A simple payment app developed with AWS managed services API Gateway, Lambda, an
 4) AWS Lambda is written in Python (tested on python3.12). timeout setting raised to 60 seconds as paypal endpoint is sometimes taking more than default 3 seconds (How to process payment quickly? - TBD).
 5) Dynamodb, Lambda and API gateway deployed on AWS with terraform. Terraform code is in for dynamodb, lambda. WIP for API Gateway.
 
-Architecture Diagram:
+# Architecture Diagram
 
 ![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
 
 
+# Code Tree
 
+```
+
+├── Flask
+│   ├── curl_test.sh
+│   ├── paymentApp.py
+│   └── test_paymentApp.py
+├── LICENSE
+├── README.md
+├── deply
+│   ├── aws
+│   │   ├── README.md
+│   │   ├── apigateway.tf
+│   │   ├── dynamodb.tf
+│   │   ├── gotchas.txt
+│   │   ├── lambda.tf
+│   │   ├── providers.tf
+│   │   ├── terraform.tf
+│   │   ├── terraform.tfvars
+│   │   └── variables.tf
+│   ├── azure
+│   └── gcp
+├── gotchas.txt
+├── images
+│   └── payAppArchDiagram.png
+└── lambda
+    ├── addCustomerTest.json
+    ├── build_lambda_zip.sh
+    ├── getCustomerTest.json
+    ├── gotchas.txt
+    ├── lambda_function.py
+    ├── payCustomerTest.json
+    ├── paymentApp-lambda.zip
+    ├── requirements.txt
+    └── test_lambda_function.py
+
+```
    
