@@ -168,3 +168,5 @@ You can use curl or python requests. I have tested with curl. But I will write t
 * [Stripe APIs](https://docs.stripe.com/api)
 * [ACH APIs ](https://achbanking.com/apiDoc)
 
+## 8) Discuss the Design Choices
+TBD
