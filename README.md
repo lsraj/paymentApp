@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [AWS Services Used](#AWS Services Used)
-2. [Payment Workflow Example](##Payment Workflow Example)
+2. [Payment Workflow Example](#Payment Workflow Example)
 3. [High Level Architecture Overview](#High Level Architecture Overview)
 
 
