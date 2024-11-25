@@ -1,6 +1,6 @@
 # Payment App Prototype
 
-## 1) AWS Components:
+## 1) AWS Services Used:
 
 A simple payment app developed with AWS managed services:
 
