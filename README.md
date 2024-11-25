@@ -157,4 +157,14 @@ Note: There is no need to pass these variables after these keys are stored in AW
 You can use curl or python requests. I have tested with curl. But I will write the details test cases here shortly.
 
 ## 7) References
+* [Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+* [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
+* [AWS Dynamodb](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)
+* [AWS Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
+* [AWS Secret Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html)
+* [AWS Simple Notification Service](https://docs.aws.amazon.com/sns/latest/dg/welcome.html)
+* [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
+* [Paypal rest API doc](https://developer.paypal.com/api/rest)
+* [Stripe APIs](https://docs.stripe.com/api)
+* [ACH APIs ](https://achbanking.com/apiDoc)
 
