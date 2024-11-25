@@ -8,7 +8,7 @@ resource "aws_dynamodb_table" "disbursements" {
 
   # Define the table keys
   hash_key  = "customer_id" # Partition Key
-  range_key = "payment_id"   # Sort Key
+  range_key = "payment_id"  # Sort Key
 
   # Define the attributes for the keys
 
@@ -25,7 +25,7 @@ resource "aws_dynamodb_table" "disbursements" {
   # Optional: Time to Live (TTL) configuration (e.g., for expiring old records)
   ttl {
     # attribute_name = "timestamp"
-    enabled        = false # Set to true if you want TTL enabled on the timestamp attribute
+    enabled = false # Set to true if you want TTL enabled on the timestamp attribute
   }
 
   # Optional: Tags for the DynamoDB table
@@ -43,7 +43,7 @@ resource "aws_dynamodb_table" "customers" {
   write_capacity = var.WCU
 
   # Define the table keys
-  hash_key  = "customer_id" # Partition Key
+  hash_key = "customer_id" # Partition Key
 
   # Define the attributes for the keys
 
@@ -55,7 +55,7 @@ resource "aws_dynamodb_table" "customers" {
   # Optional: Time to Live (TTL) configuration (e.g., for expiring old records)
   ttl {
     # attribute_name = "timestamp"
-    enabled        = false # Set to true if you want TTL enabled on the timestamp attribute
+    enabled = false # Set to true if you want TTL enabled on the timestamp attribute
   }
 
   # Optional: Tags for the DynamoDB table
@@ -99,10 +99,10 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
           "dynamodb:Query",
           "dynamodb:GetItem"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
-            aws_dynamodb_table.disbursements.arn,
-            aws_dynamodb_table.customers.arn
+          aws_dynamodb_table.disbursements.arn,
+          aws_dynamodb_table.customers.arn
         ]
       }
     ]
