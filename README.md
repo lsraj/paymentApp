@@ -1,6 +1,18 @@
 # Payment App Prototype
 
-A simple payment app developed with AWS managed services API Gateway, Lambda, and Dynamodb. High level overview:
+## 1) AWS Components:
+
+A simple payment app developed with AWS managed services:
+
+1) AWS API Gateway: Provides and endpoint for incoming incoming HTTP(S) requests such as payment disbursement to a customer.
+2) AWS Cognito: Handles authentication and authorization for users accessing the banking payment system.
+3) Lambda: Processes payments by interacting with 3rd party payment receivers APIs (Paypal, Stripe, ACH etc). Also interacts with Dynamodb for validating the user and storing the disbursements for auditing and other purposes. 
+4) Secrets Manager: Stores sensitive information such as 3rd party vendors API secret and access keys.
+5) SNS: Sends notifications to users after payment is complete.
+6) DynamoDB: Stores payment records and user data.
+7) CloudWatch: Monitors logs, metrics.
+
+High level overview:
 
 1) Dynamodb has two tables 'Customers' and 'Disbursements':
      * Customers table stores customer information: It has a customer_id partition key (string such as unixuser1) and an attribute 'email'. There is no sort key. Other attributes can be added, but I will work on limiting them (TBD).
