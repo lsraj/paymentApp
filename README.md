@@ -12,6 +12,9 @@ A simple payment app developed with AWS managed services:
 6) DynamoDB: Stores payment records and user data.
 7) CloudWatch: Monitors logs, metrics.
 
+![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
+
+
 High level overview:
 
 1) Dynamodb has two tables 'Customers' and 'Disbursements':
@@ -68,7 +71,7 @@ High level overview:
 
 # Architecture Diagram
 
-![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
+
 
 
 # Code Tree
