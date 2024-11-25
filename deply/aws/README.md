@@ -1,4 +1,4 @@
-# Terraform gotchas
+# Terraform cheatseet
 
 Terraform is a powerful tool for managing infrastructure as code. Here are some basic commands that are essential for using Terraform:
 
