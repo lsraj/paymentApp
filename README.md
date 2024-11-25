@@ -12,7 +12,9 @@ A simple payment app developed with AWS managed services:
 6) DynamoDB: Stores payment records and user data.
 7) CloudWatch: Monitors logs, metrics.
 
-Note: WIP (work in progress to integrate Cognito and SNS).
+Note: WIP (work in progress) to integrate Cognito and SNS).
+
+
 ![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
 
 
