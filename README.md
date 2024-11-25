@@ -1,6 +1,6 @@
 # Payment App Prototype
 
-## 1) AWS Services Used:
+## 1) AWS Services Used
 
 A simple payment app developed with AWS managed services:
 
@@ -18,7 +18,7 @@ Note: WIP (work in progress) to integrate Cognito and SNS).
 ![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
 
 
-## 2) Payment Workflow Example:
+## 2) Payment Workflow Example
 
 Banks, Insurance companies etc can deploy the AWS services with the terraform code in this source code repo. They can send POST API request on API Gateway endpoint: ```curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user1", "email": "user1@example.com", "amount": 2000, "currency": "USD"}'```. API Gateway sends this request to Lambda which processes the request by interacting with 3rd party vendors and other AWS services and replies the status back to API Gateway.
 
@@ -118,7 +118,7 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
     └── test_lambda_function.py
 ```
 
-## 5) Infrastructure Deployment:
+## 5) Infrastructure Deployment
 1) Build Lambda zip:
 
 ```
