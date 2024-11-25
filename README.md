@@ -182,3 +182,8 @@ curl -X POST http://127.0.0.1:5000/v1/api/payments -H "Content-Type: application
 
 ## 8) Discuss the Design Choices and Tradeoffs 
 TBD
+
+## 9) WIP
+ * API gateway deployment with terraform
+ * SNS deployment with terraform. And Sending the notification from Lambda code
+ * Cognito deployment with terraform
