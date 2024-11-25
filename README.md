@@ -26,8 +26,8 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
 ## 3) High Level Architecture Overview:
 
 1) Dynamodb has two tables 'Customers' and 'Disbursements':
-     * Customers table stores customer information: It has a customer_id partition key (string such as unixuser1) and an attribute 'email'. There is no sort key. Other attributes can be added, but I will work on limiting them (TBD).
-     * Disbursements table contains all disbursements made to a customer (for audit and other purposes): This table has partition key 'customer_id' and sort key 'payment_id' (date in ISO 8601 format), it also has other attributes amount, currency, payment_method, and email.
+     * Customers table stores customer information: It has a customer_id as partition key (string such as unixuser1) and 'email' as an attribute . There is no sort key. Other attributes can be added, but I will work on limiting them (TBD).
+     * Disbursements table contains all disbursements made to a customer (for audit and other purposes): This table has 'customer_id' as partition key and 'payment_id' (date in ISO 8601 format) as sort key, it also has other attributes amount, currency, payment_method, and email.
 
 2) API Gateway is hosted with 4 REST APIs as below:
     * POST on resource /v1/api/customer: inserts customer_id and email into Customers table. API Gateway request body model:
@@ -46,8 +46,10 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
           "required": ["customer_id", "email"]
       }
       ```
+      
     * GET on /v1/api/customer/{customer_id}: Gets the customer record from Customers table.
-    * POST on /v1/api/payment: Process the payment for a customer. Request body model in API Gateway:
+      
+    * POST on /v1/api/payments: Process the payment for a customer. Request body model in API Gateway:
      ```
      {
          "type": "object",
@@ -74,15 +76,11 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
     * GET on /v1/api/payment/{customer_id}: Gets the payment records of a customer.
 
 3) I have used paypal sandbox endpoint https://api.sandbox.paypal.com to mimic the payment processing. See [Paypal rest API doc](https://developer.paypal.com/api/rest) for more details. I plan to integrate [Stripe](https://docs.stripe.com/api), [ACH](https://achbanking.com/apiDoc) etc(TBD).
-4) AWS Lambda is written in Python (tested on python3.12). timeout setting raised to 60 seconds as paypal endpoint is sometimes taking more than default 3 seconds (How to process payment quickly? - TBD).
-5) Dynamodb, Lambda and API gateway deployed on AWS with terraform. Terraform code is in for dynamodb, lambda. WIP for API Gateway.
-
-# Architecture Diagram
+   
+4)  AWS Lambda is written in Python (tested on python3.12). timeout setting raised to 60 seconds as paypal endpoint is sometimes taking more than default 3 seconds (How to process payment quickly? - TBD).
 
 
-
-
-# Code Tree
+## 4) Code Tree
 
 ```
 
@@ -118,6 +116,44 @@ Banks, Insurance companies etc can deploy the AWS services with the terraform co
     ├── paymentApp-lambda.zip
     ├── requirements.txt
     └── test_lambda_function.py
+```
+
+## 5) Infrastructure Deployment:
+1) Build Lambda zip:
 
 ```
-   
+$ cd lambda
+$ cat build_lambda_zip.sh 
+#
+# Run this from the dir where lambda_function.py is
+#
+pip install -r requirements.txt -t package/
+cp lambda_function.py package/
+cd package && zip -r9 ../paymentApp-lambda.zip . && cd ..
+rm -rf package
+$
+$
+$ cat requirements.txt 
+requests==2.31.0
+boto3==1.35.68
+botocore==1.35.68
+$
+$ ./build_lambda_zip.sh 
+$ ls paymentApp-lambda.zip 
+paymentApp-lambda.zip
+$
+$
+$ cd ../deply/aws/
+$ terraform init
+$ terraform plan -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
+$ terraform apply -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
+$
+
+Note: There is no need to pass these variables after these keys are stored in AWS Secret Manager. TBD.
+
+## 6) Testing
+
+You can use curl or python requests. I have tested with curl. But I will write the details test cases here shortly.
+
+## 7) References
+
