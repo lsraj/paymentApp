@@ -129,6 +129,19 @@ API Gateway sends this request to Lambda which processes the request by interact
 
 ```
 $ cd lambda
+$ ./build_lambda_zip.sh 
+$ ls paymentApp-lambda.zip 
+  paymentApp-lambda.zip
+$ cd ../deply/aws/
+$ terraform init
+$ terraform plan -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
+$ terraform apply -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
+$
+```
+Note: Ideally, API keys should not be sent this way. They have to be managed in services such as AWS Secret Manager or similar.
+
+Take a lool at build script:
+```
 $ cat build_lambda_zip.sh  
   #
   # Run this from the dir where lambda_function.py is
@@ -138,21 +151,11 @@ $ cat build_lambda_zip.sh
   cd package && zip -r9 ../paymentApp-lambda.zip . && cd ..
   rm -rf package
 $
-$
 $ cat requirements.txt 
    requests==2.31.0
    boto3==1.35.68
    botocore==1.35.68
 $
-$ ./build_lambda_zip.sh 
-$ ls paymentApp-lambda.zip 
-   paymentApp-lambda.zip
-$
-$
-$ cd ../deply/aws/
-$ terraform init
-$ terraform plan -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
-$ terraform apply -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
 $
 ```
 
