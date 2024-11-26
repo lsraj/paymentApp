@@ -22,7 +22,9 @@ Note: WIP (work in progress) to integrate Cognito and SNS).
 
 Deploy the AWS services with the terraform code in this source code repo. Send POST request on API Gateway endpoint. Example:
 
-```curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user1", "email": "user1@example.com", "amount": 2000, "currency": "USD"}'
+```
+curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user1", "email": "user1@example.com", "amount": 2000, "currency": "USD"}'
+
 ```
 API Gateway sends this request to Lambda which processes the request by interacting with other AWS services and 3rd party vendors and replies with the status back to API Gateway.
 
