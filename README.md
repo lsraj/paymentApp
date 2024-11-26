@@ -194,8 +194,8 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 ## 8) Discuss the Design Choices and Tradeoffs 
 TBD
 
-## 9) TBD - WIP
- List of items to be done (this work is in progress).
+## 9) Work in Progress
+ 
  * API gateway deployment with terraform
  * SNS deployment with terraform. And Sending the notification from Lambda code
  * Cognito deployment with terraform
