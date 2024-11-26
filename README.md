@@ -141,7 +141,7 @@ $
 ```
 Note: Ideally, API keys should not be sent this way. They have to be managed in services such as AWS Secret Manager or similar - TBD.
 
-Take a lool at build script:
+Take a look at build script:
 ```
 $ cat build_lambda_zip.sh  
   #
