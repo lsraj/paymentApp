@@ -99,7 +99,6 @@ API Gateway sends this request to Lambda which processes the request by interact
 ├── deply
 │   ├── aws
 │   │   ├── README.md
-│   │   ├── apigateway.tf
 │   │   ├── dynamodb.tf
 │   │   ├── gotchas.txt
 │   │   ├── lambda.tf
