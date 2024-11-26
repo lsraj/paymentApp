@@ -32,7 +32,7 @@ API Gateway sends this request to Lambda which processes the request by interact
 ## 3) High Level Architecture Overview
 
 1) Dynamodb has two tables **Customers** and **Disbursements**:
-     * **Customers table** stores customer information: It has a **customer_id as a partition key** (string such as **user1**) and 'email' as an attribute . There is no sort key. Other attributes can be added, but I will work on limiting them (TBD).
+     * **Customers table** stores customer information: It has a **customer_id as a partition key** (string such as **user1**) and 'email' as an attribute. There is no sort key. Other attributes can be added, but I will work on limiting them (TBD).
      * **Disbursements table** contains all disbursements made to a customer (for audit and other purposes): This table has **customer_id as partition key and payment_id (date in ISO 8601 format) as sort key**, it also has other attributes amount, currency, payment_method, and email.
 
 2) API Gateway is hosted with 4 REST APIs as below:
