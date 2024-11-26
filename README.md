@@ -125,7 +125,8 @@ API Gateway sends this request to Lambda which processes the request by interact
 ```
 
 ## 5) Infrastructure Deployment
-1) Build Lambda zip:
+
+Build Lambda zip. And deploy the infrastructure onto AWS with terraform.
 
 ```
 $ cd lambda
