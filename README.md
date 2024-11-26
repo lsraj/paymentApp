@@ -188,6 +188,8 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 * [Paypal rest API doc](https://developer.paypal.com/api/rest)
 * [Stripe APIs](https://docs.stripe.com/api)
 * [ACH APIs ](https://achbanking.com/apiDoc)
+* [AWS Architecture Icons](https://aws.amazon.com/architecture/icons)
+* [Free tool to draw architecture diagrams](https://app.diagrams.net)
 
 ## 8) Discuss the Design Choices and Tradeoffs 
 TBD
