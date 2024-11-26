@@ -4,7 +4,7 @@ resource "aws_lambda_function" "payment_lambda" {
   filename         = "../../lambda/paymentApp-lambda.zip"
   source_code_hash = filebase64sha256("../../lambda/paymentApp-lambda.zip")
   role             = aws_iam_role.lambda_role.arn
-  handler          = "lambda_function.lambda_handler" # Your Python handler function
+  handler          = "lambda_function.lambda_handler"
   runtime          = "python3.12"
   memory_size      = 128
   timeout          = 60
