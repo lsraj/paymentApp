@@ -139,7 +139,7 @@ $ terraform plan -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="
 $ terraform apply -var="paypal_sandbox_url=https://api.sandbox.paypal.com" -var="paypal_clinet_id=<CLINET_ID>" -var="paypal_secret=<SECRET>"
 $
 ```
-Note: Ideally, API keys should not be sent this way. They have to be managed in services such as AWS Secret Manager or similar.
+Note: Ideally, API keys should not be sent this way. They have to be managed in services such as AWS Secret Manager or similar - TBD.
 
 Take a lool at build script:
 ```
@@ -159,8 +159,6 @@ $ cat requirements.txt
 $
 $
 ```
-
-Note: There is no need to pass these variables after these keys are stored in AWS Secret Manager. TBD.
 
 ## 6) Testing
 
