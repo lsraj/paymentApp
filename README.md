@@ -162,7 +162,7 @@ $
 
 ## 6) Testing
 
-curl or python requests or postman  can be used for testing.
+curl or python requests module or postman can be used for testing. I will be scripting detailed tests with python requests module soon.
 
 ```
 curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/customer -d '{"customer_id": "user1", "email": "user1@abc.com"}'
