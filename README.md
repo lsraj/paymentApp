@@ -113,15 +113,17 @@ API Gateway sends this request to Lambda which processes the request by interact
 ├── images
 │   └── payAppArchDiagram.png
 └── lambda
-    ├── addCustomerTest.json
+    ├── aws-cli-lambda-test
+    │   ├── addCustomerTest.json
+    │   ├── getCustomerTest.json
+    │   ├── gotchas.txt
+    │   └── payCustomerTest.json
     ├── build_lambda_zip.sh
-    ├── getCustomerTest.json
-    ├── gotchas.txt
     ├── lambda_function.py
-    ├── payCustomerTest.json
     ├── paymentApp-lambda.zip
     ├── requirements.txt
     └── test_lambda_function.py
+
 ```
 
 ## 5) Infrastructure Deployment
