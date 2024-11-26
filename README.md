@@ -5,7 +5,7 @@
 A simple payment app developed with AWS managed services:
 
 1) **AWS API Gateway**: Provides and endpoint for incoming HTTPS requests such as payment disbursement to a customer.
-2) **AWS Cognito**: Handles authentication and authorization for users accessing the banking payment system.
+2) **AWS Cognito**: Handles authentication and authorization for users accessing the payment system.
 3) **Lambda**: Processes payments by interacting with 3rd party payment receivers APIs (Paypal, Stripe, ACH etc). Also interacts with Dynamodb for validating the user and storing the disbursements for auditing and other purposes. 
 4) **Secrets Manager**: Stores sensitive information such as 3rd party vendors API secret and access keys.
 5) **SNS**: Sends notifications to users after payment is complete.
