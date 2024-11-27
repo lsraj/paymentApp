@@ -11,8 +11,9 @@ A simple payment app developed with AWS managed services:
 5) **SNS**: Sends notifications to users after payment is complete.
 6) **DynamoDB**: Stores payment records and user data.
 7) **CloudWatch**: Monitors logs, metrics.
+8) **IAM**: For IAM roles.
 
-Note: WIP (work in progress) to integrate Cognito and SNS).
+Note: work in progress to integrate Cognito and SNS.
 
 
 ![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
