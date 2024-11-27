@@ -13,8 +13,6 @@ A simple payment app developed with AWS managed services:
 7) **CloudWatch**: Monitors logs, metrics.
 8) **IAM**: For IAM roles.
 
-Note: work in progress to integrate Cognito and SNS.
-
 
 ![Alt text](images/payAppArchDiag.png?raw=true "Architecture Digram")
 
