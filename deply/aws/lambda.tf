@@ -18,6 +18,11 @@ resource "aws_lambda_function" "payment_lambda" {
     }
   }
 
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_dynamodb_attachment,
+    aws_iam_role_policy_attachment.lambda_logs,
+  ]
+
 }
 
 # create IAM role for lambda
@@ -90,13 +95,13 @@ resource "aws_iam_policy" "lambda_cloudwatch_logging" {
   })
 }
 
-# attach dynamodb access policy lambda role
+# attach dynamodb access policy to lambda role
 resource "aws_iam_role_policy_attachment" "lambda_dynamodb_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.dynamodb_access_policy.arn
 }
 
-# attach cloudwatch logging policy lambda role
+# attach cloudwatch logging policy to lambda role
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_cloudwatch_logging.arn
