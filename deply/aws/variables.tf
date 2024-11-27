@@ -56,5 +56,5 @@ variable "payment_app_apigateway_stage" {
 variable "lambda_logs_retention_days" {
   description = "Payement App Lambda Logs Retention period"
   type        = number
-  default     = 14
+  default     = 5
 }

@@ -13,4 +13,4 @@ WCU = 5
 
 payment_app_apigateway_stage = "dev"
 
-lambda_logs_retention_days = 14
+lambda_logs_retention_days = 5
