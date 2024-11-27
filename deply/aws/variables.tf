@@ -47,3 +47,14 @@ variable "paypal_secret" {
   sensitive   = true
 }
 
+variable "payment_app_apigateway_stage" {
+  description = "Payement App API Gateway Stage"
+  type        = string
+  default     = "dev"
+}
+
+variable "lambda_logs_retention_days" {
+  description = "Payement App Lambda Logs Retention period"
+  type        = number
+  default     = 14
+}
