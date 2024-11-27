@@ -13,30 +13,37 @@ resource "aws_api_gateway_resource" "v1" {
 }
 
 # create resource /v1/api
-resource "aws_api_gateway_resource" "api" {
+resource "aws_api_gateway_resource" "v1_api" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id   = aws_api_gateway_resource.v1.id
   path_part   = "api"
 }
 
 # create resource /v1/api/customer
-resource "aws_api_gateway_resource" "customer" {
+resource "aws_api_gateway_resource" "v1_api_customer" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_resource.api.id
+  parent_id   = aws_api_gateway_resource.v1_api.id
   path_part   = "customer"
 }
 
-# create resource /v1/api/payments
-resource "aws_api_gateway_resource" "payments" {
+# create resource /v1/api/customer/{customer_id}
+resource "aws_api_gateway_resource" "get_customer_id" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_resource.api.id
+  parent_id   = aws_api_gateway_resource.v1_api_customer.id
+  path_part   = "{customer_id}"
+}
+
+# create resource /v1/api/payments
+resource "aws_api_gateway_resource" "v1_api_payments" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_resource.v1_api.id
   path_part   = "payments"
 }
 
 # create POST method on /v1/api/customer
 resource "aws_api_gateway_method" "post_customer" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.customer.id
+  resource_id   = aws_api_gateway_resource.v1_api_customer.id
   http_method   = "POST"
   authorization = "NONE"
 
@@ -48,10 +55,24 @@ resource "aws_api_gateway_method" "post_customer" {
   depends_on = [aws_api_gateway_model.customer_request_model]
 }
 
+# create GET method on /v1/api/customer/{customer_id}
+resource "aws_api_gateway_method" "get_customer" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.get_customer_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+
+  # TBD (Rajesham)
+  # request_validator_id = aws_api_gateway_request_validator.id
+  request_parameters = {
+    "method.request.path.customer_id" = true # customer_id is required in path
+  }
+}
+
 # create POST Method on /v1/api/payments
 resource "aws_api_gateway_method" "post_payments" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.payments.id
+  resource_id   = aws_api_gateway_resource.v1_api_payments.id
   http_method   = "POST"
   authorization = "NONE"
 
@@ -110,18 +131,38 @@ resource "aws_api_gateway_model" "payments_request_model" {
 
 # lambda integration for /v1/api/customer
 resource "aws_api_gateway_integration" "customer_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.v1_api_customer.id
+  http_method = aws_api_gateway_method.post_customer.http_method
+
+  # Note: For API Gateway and lambda integration, the integration_http_method
+  # is always "POST". When API Gateway invokes a Lambda function via AWS Proxy
+  # integration (AWS_PROXY), the HTTP method API Gateway uses to call Lambda
+  # is always POST, regardless of the method (e.g., GET, POST, PUT, etc.) you
+  # define for the resource.
+  integration_http_method = "POST"
+
+  type = "AWS_PROXY"
+  uri  = aws_lambda_function.payment_lambda.invoke_arn
+}
+
+# lambda integration for /v1/api/customer/{customer_id}
+resource "aws_api_gateway_integration" "customer_id_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.customer.id
-  http_method             = aws_api_gateway_method.post_customer.http_method
+  resource_id             = aws_api_gateway_resource.get_customer_id.id
+  http_method             = aws_api_gateway_method.get_customer.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.payment_lambda.invoke_arn
+  request_parameters = {
+    "integration.request.path.customer_id" = "method.request.path.customer_id"
+  }
 }
 
 # lambda lntegration for /v1/api/payments
 resource "aws_api_gateway_integration" "payments_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.payments.id
+  resource_id             = aws_api_gateway_resource.v1_api_payments.id
   http_method             = aws_api_gateway_method.post_payments.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -155,12 +196,14 @@ resource "aws_api_gateway_deployment" "payment_apigateway_deploy" {
     redeployment = sha1(jsonencode([
       aws_api_gateway_rest_api.api.body,
       aws_api_gateway_resource.v1.id,
-      aws_api_gateway_resource.api.id,
-      aws_api_gateway_resource.customer.id,
-      aws_api_gateway_resource.payments.id,
+      aws_api_gateway_resource.v1_api.id,
+      aws_api_gateway_resource.v1_api_customer.id,
+      aws_api_gateway_resource.v1_api_payments.id,
       aws_api_gateway_method.post_customer.id,
+      aws_api_gateway_method.get_customer.id,
       aws_api_gateway_method.post_payments.id,
       aws_api_gateway_integration.customer_integration.id,
+      aws_api_gateway_integration.customer_id_integration.id,
       aws_api_gateway_integration.payments_integration.id
     ]))
   }

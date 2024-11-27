@@ -11,15 +11,15 @@ def lambda_handler(event, context):
     Lambda handler function to route based on resource paths and HTTP methods.
     """
 
-    # Extract resource path and HTTP method from the event object
+    # extract resource path and API method from the event object
     resource_path = event.get('resource', '')
     http_method = event.get('httpMethod', '')
 
-    # Log incoming request for debugging purposes
+    # log incoming request
     print(f"Resource Path: {resource_path}")
-    print(f"HTTP Method: {http_method}")
+    print(f"API Method: {http_method}")
 
-    # Route to the appropriate handler based on resource path and API Method
+    # route based on resource path and API Method
     match resource_path:
 
         case '/v1/api/customer' if http_method == 'POST':
@@ -32,95 +32,88 @@ def lambda_handler(event, context):
             return process_payment(event, context)
 
         case _:
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message': 'Resource not found or method not allowed'})
-            }
+            lambda_resp = {}
+            lambda_resp['statusCode'] = 404
+            lambda_resp['body'] = json.dumps({'message': 'resource not found or method supported'})
+            return lambda_resp
 
 
 def add_customer(event, context):
 
     """
-    Handle POST request to /v1/api/customer to add a new customer.
+    process POST method on /v1/api/customer to add a new customer.
     """
 
     body = json.loads(event['body'])
     customer_id = body.get('customer_id', '').strip()
     customer_email = body.get('email', '').strip()
+    api_resp = {}
 
     # sanitise params
     if not customer_id or not customer_email:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'message': f'customer_id and email fields are required'})
-        }
+        api_resp['statusCode'] = 400
+        api_resp['body'] = json.dumps({'message': f'customer_id and email fields are required'})
+        return api_resp
     
-    # Store customer record in DynamoDB
-    cust_record = {
+    # store customer record in DynamoDB
+    customer_record = {
         'customer_id': customer_id,
         'email': customer_email
     }
 
     try:
         dynamodb = boto3.resource('dynamodb')
-        cust_table = dynamodb.Table('Customers')
-        resp = cust_table.put_item(Item=cust_record)
-        return {
-            'statusCode': resp['ResponseMetadata']['HTTPStatusCode'],
-            'body': json.dumps({'message': f'{customer_id} added successfully'})
-        }
-
+        customer_table = dynamodb.Table('Customers')
+        put_item_resp = customer_table.put_item(Item=customer_record)
+        api_resp['statusCode'] = put_item_resp['ResponseMetadata']['HTTPStatusCode']
+        api_resp['body'] = json.dumps({'message': f'{customer_id} added successfully'})
     except ClientError as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message': f"Error occurred: {e.response['Error']['Message']}"})
-        }
+        api_resp['statusCode'] = 500
+        api_resp['body'] = json.dumps({'message': f"Error occurred: {e.response['Error']['Message']}"})
+
+    return api_resp
 
 
 def get_customer(event, context):
 
     """
-    Handle GET request to /v1/api/customer/{customer_id} to retrieve a customer by ID.
+    process GET method on /v1/api/customer/{customer_id} to retrieve a customer record.
     """
-
+    api_resp = {}
     customer_id = event.get('pathParameters', {}).get('customer_id', '').strip()
+
+    print(f'customer_id: {customer_id}')
+
     if not customer_id:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'customer_id is required'})
-        }
-   
+        api_resp['statusCode'] = 400
+        api_resp['body'] = json.dumps({'message': 'customer_id is required'})
+        return api_resp
+
     try:
         dynamodb = boto3.resource('dynamodb')
-        cust_table = dynamodb.Table('Customers')
-        resp = cust_table.get_item(Key={'customer_id': customer_id})
-
-        if 'Item' not in resp:
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message' : f'{customer_id} not in records'})
-            }
-
-        # customer is in records
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'customer_id': resp['Item']['customer_id'],
-                'email': resp['Item']['email']
+        customer_table = dynamodb.Table('Customers')
+        get_item_resp = customer_table.get_item(Key={'customer_id': customer_id})
+        if 'Item' in get_item_resp:
+            api_resp['statusCode'] = 200
+            api_resp['body'] = json.dumps({
+                'customer_id': get_item_resp['Item']['customer_id'],
+                'email': get_item_resp['Item']['email']
             })
-        }
-
+        else:
+            api_resp['statusCode'] = 404
+            api_resp['body'] = json.dumps({'message' : f'{customer_id} not in records'})
     except ClientError as e:
-            return {
-                'statusCode': 500,
-                'body': json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
-            }
+            api_resp['statusCode'] = 500
+            api_resp['body'] = json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
+
+    print(f'api_resp: {api_resp}')
+    return api_resp
 
  
 def process_payment(event, context):
 
     """
-    Handle POST request to /v1/api/payments to create a payment.
+    process POST method on /v1/api/payments to process payment to a customer.
     """
 
     body = json.loads(event['body'])
@@ -139,8 +132,8 @@ def process_payment(event, context):
 
     # lookup customer in records
     try:
-        cust_table = dynamodb.Table('Customers')
-        resp = cust_table.get_item(Key={'customer_id': customer_id})
+        customer_table = dynamodb.Table('Customers')
+        resp = customer_table.get_item(Key={'customer_id': customer_id})
         if 'Item' not in resp:
             print(f'Customer {customer_id} not in records')
             return {
