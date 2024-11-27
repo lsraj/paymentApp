@@ -190,10 +190,7 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 * [AWS Architecture Icons](https://aws.amazon.com/architecture/icons)
 * [Free tool to draw architecture diagrams](https://app.diagrams.net)
 
-## 8) Discuss the Design Choices and Tradeoffs 
-TBD
-
-## 9) Work in Progress
+## 8) Work in Progress
  
  * API gateway deployment with terraform
  * SNS deployment with terraform. And Sending the notification from Lambda code
