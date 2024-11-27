@@ -122,46 +122,48 @@ def process_payment(event, context):
     amount = body.get('amount', 0)
     currency = body.get('currency', 'USD')
 
-    if not customer_id:
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'customer_id is required'})
-        }
-   
+    api_resp = {}
+    if not customer_id or not email:
+        api_resp['statusCode'] = 400
+        api_resp['body'] = json.dumps({'message': 'customer_id and email required'})
+        return api_resp
+
     dynamodb = boto3.resource('dynamodb')
 
     # lookup customer in records
+    item_found = False
     try:
         customer_table = dynamodb.Table('Customers')
-        resp = customer_table.get_item(Key={'customer_id': customer_id})
-        if 'Item' not in resp:
-            print(f'Customer {customer_id} not in records')
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message' : f'{customer_id} not in records'})
-            }
-
+        get_item_resp = customer_table.get_item(Key={'customer_id': customer_id})
+        item = get_item_resp.get('Item')
+        if item is None or not isinstance(item, dict):
+            api_resp['statusCode'] = 404
+            api_resp['body'] = json.dumps({'message' : f'{customer_id} not in records'})
+        elif item.get('email') != email:
+            api_resp['statusCode'] = 400
+            api_resp['body'] = json.dumps({'message' : f'user {email} not matched with {item.get('email')}'})
+        else:
+            item_found = True
     except ClientError as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
-        }
+        api_resp['statusCode'] = 500
+        api_resp['body'] = json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
+
+    if not item_found:
+        return api_resp
 
     access_token = get_access_token()
     if access_token is None:
         print(f"failed to get PayPal API OAuth token")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message' : 'error : failed to get PayPal API OAuth token'})
-        }
+        api_resp['statusCode'] = 500
+        api_resp['body'] = json.dumps({'message' : 'error : failed to get PayPal API OAuth token'})
+        return api_resp
 
-    paypal_url = os.environ['PAYPAL_SANDBOX_URL']
-    url = f'{paypal_url}/v1/payments/payment'
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json'
-    }
-    payment_data = {
+    paypal_base_url = os.environ['PAYPAL_SANDBOX_URL']
+    paypal_url = f'{paypal_base_url}/v1/payments/payment'
+    paypal_req_headers = {}
+    paypal_req_headers['Authorization'] = f'Bearer {access_token}'
+    paypal_req_headers['Content-Type'] = 'application/json'
+    paypal_req = {
         "intent": "authorize",
         "payer": {
             "payment_method": "paypal"
@@ -173,29 +175,25 @@ def process_payment(event, context):
             },
             "description": "Test payment"
         }],
-
         "redirect_urls": {
             "return_url": "http://localhost:3000/return",  # Dummy URL
             "cancel_url": "http://localhost:3000/cancel"   # Dummy URL
         }
-
     }
-
     # Add payee (recipient) details
-    payment_data['transactions'][0]['payee'] = {
-        "email": email  # Specify the recipient's email address here
+    paypal_req['transactions'][0]['payee'] = {
+        "email": email
     }
 
-    response = requests.post(url, json=payment_data, headers=headers)
+    paypal_resp = requests.post(paypal_url, json=paypal_req, headers=paypal_req_headers)
 
-    if response.status_code == 201:
+    if paypal_resp.status_code in [200, 201]:
         print('Payment Authorization created successfully.')
     else:
-        print(f"Failed to create payment: status code: {response.status_code}, message: {response.text}")
-        return {
-            'statusCode': response.status_code,
-            'body': json.dumps({'message' : f'error : payment failed for {customer_id} - {response.text}'})
-        }
+        print(f"Failed to process payment: status code = {paypal_resp.status_code}, message: {paypal_resp.text}")
+        api_resp['statusCode'] = paypal_resp.status_code
+        api_resp['body'] = json.dumps({'message' : f'error : payment failed for {customer_id} - {paypal_resp.text}'})
+        return api_resp
 
     # Store payment record in DynamoDB
     payment_record = {
@@ -208,37 +206,36 @@ def process_payment(event, context):
         'currency': currency,
         #'timestamp': str(context.aws_request_id)
     }
-
     try:
-        disb_table = dynamodb.Table('Disbursements')
-        resp = disb_table.put_item(Item=payment_record)
-        print(f"Rajesham Debug: {resp['ResponseMetadata']['HTTPStatusCode']}")
-        return {
-            'statusCode': resp['ResponseMetadata']['HTTPStatusCode'],
-            'body': json.dumps({'message' : f'{customer_id} payment successful'})
-        }
-
+        disbursement_table = dynamodb.Table('Disbursements')
+        resp = disbursement_table.put_item(Item=payment_record)
+        print(f"disbursement table put resp code: {resp['ResponseMetadata']['HTTPStatusCode']}")
+        api_resp['statusCode'] = resp['ResponseMetadata']['HTTPStatusCode']
+        api_resp['body'] = json.dumps({'message' : f'{customer_id} payment successful'})
     except ClientError as e:
-        return jsonify({"error": f"Error occurred: {e.response['Error']['Message']}"}), 500
+        api_resp = {}
+        api_resp['statusCode'] = 500
+        api_resp['body'] = json.dumps({'message' : f"Error occurred: {e.response['Error']['Message']}"})
 
+    return api_resp
 
 # Get OAuth token from PayPal
 def get_access_token():
 
-    paypal_url = os.environ['PAYPAL_SANDBOX_URL']
+    paypal_base_url = os.environ['PAYPAL_SANDBOX_URL']
     paypal_client_id = os.environ['PAYPAL_CLIENT_ID']
     paypal_secret = os.environ['PAYPAL_SECRET']
+    paypal_url = f'{paypal_base_url}/v1/oauth2/token'
 
-    url = f'{paypal_url}/v1/oauth2/token'
-    headers = {
-        'Accept': 'application/json',
-        'Accept-Language': 'en_US'
-    }
+    paypal_req_headers = {}
+    paypal_req_headers ['Accept'] = 'application/json'
+    paypal_req_headers['Accept-Language'] = 'en_US'
 
-    response = requests.post(
-        url,
-        headers=headers,
-        data={'grant_type': 'client_credentials'},
+    paypal_req_data = {}
+    paypal_req_data['grant_type'] = 'client_credentials'
+
+    response = requests.post(paypal_url, headers=paypal_req_headers,
+        data=paypal_req_data,
         auth=(paypal_client_id, paypal_secret)
     )
 
