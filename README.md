@@ -49,7 +49,7 @@ API Gateway sends this request to Lambda which processes the request by interact
                   "type" : "string",
                   "format" : "email",
                   "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-                  "minLength" : 5,# example: a@b.c
+                  "minLength" : 5, # example: a@b.c
                   "maxLength" : 254 # see RFC 5321 and RFC 5322
               }
           },
@@ -63,41 +63,41 @@ API Gateway sends this request to Lambda which processes the request by interact
     * **POST on /v1/api/payments**: Process the payment for a customer. Request body model in API Gateway:
      ```
     {
-      "type": "object",
-      "properties": {
-        "customer_id": {
-          "type": "string",
-          "pattern": "^[A-Za-z0-9]{8,20}$",
-          "minLength": 8,
-          "maxLength": 20
-        },
-        "email": {
-          "type": "string",
-          "format": "email",
-          "pattern": "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-          "minLength": 5, # example: a@b.c
-          "maxLength": 254 # see RFC 5321 and RFC 5322
-        },
-        "amount": {
-          "type": "number",
-          "minimum": 1,
-          "maximum": 1000000
-        },
-        "currency": {
-          "type": "string",
-          "enum": ["USD", "INR", "EUR", "JPY", "GBP"]
-        }
-      },
-      "required": ["customer_id", "email", "amount", "currency"]
+         "type": "object",
+         "properties": {
+             "customer_id": {
+                 "type": "string",
+                 "pattern": "^[A-Za-z0-9]{8,20}$",
+                 "minLength": 8,
+                 "maxLength": 20
+             },
+             "email": {
+                 "type": "string",
+                 "format": "email",
+                 "pattern": "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                 "minLength": 5, # example: a@b.c
+                 "maxLength": 254 # see RFC 5321 and RFC 5322
+             },
+             "amount": {
+                 "type": "number",
+                 "minimum": 1,
+                 "maximum": 1000000
+             },
+             "currency": {
+                 "type": "string",
+                 "enum": ["USD", "INR", "EUR", "JPY", "GBP"]
+             }
+         },
+         "required": ["customer_id", "email", "amount", "currency"]
     }
 
      ```
 
     * **GET on /v1/api/payment/{customer_id}**: Gets the payment records of a customer.
 
-3) PayPal sandbox endpoint https://api.sandbox.paypal.com is used to mimic the payment processing. See [Paypal rest API doc](https://developer.paypal.com/api/rest) for more details. I plan to integrate [Stripe](https://docs.stripe.com/api), [ACH](https://achbanking.com/apiDoc) etc(TBD).
+4) PayPal sandbox endpoint https://api.sandbox.paypal.com is used to mimic the payment processing. See [Paypal rest API doc](https://developer.paypal.com/api/rest) for more details. I plan to integrate [Stripe](https://docs.stripe.com/api), [ACH](https://achbanking.com/apiDoc) etc(TBD).
    
-4)  AWS Lambda is written in Python (tested on python3.12). **timeout setting raised to 60 seconds** as paypal endpoint is sometimes taking more than the default 3 seconds (How to process payment quickly? - TBD).
+5)  AWS Lambda is written in Python (tested on python3.12). **timeout setting raised to 60 seconds** as paypal endpoint is sometimes taking more than the default 3 seconds (How to process payment quickly? - TBD).
 
 
 ## 4) Code Tree
