@@ -1,4 +1,16 @@
 
+/*
+* Core resources required to integrate AWS  API Gateay with AWS Lambda are:
+* - aws_api_gateway_rest_api
+* - aws_api_gateway_resource
+* - aws_api_gateway_method
+* - aws_api_gateway_integration
+* - aws_lambda_permission
+* - aws_api_gateway_deployment
+*
+* aws_api_gateway_model resource also important to validate API request body.
+**/
+
 # API Gateway Setup
 resource "aws_api_gateway_rest_api" "api" {
   name        = "paymentAppAPI"
@@ -213,7 +225,7 @@ resource "aws_api_gateway_deployment" "payment_apigateway_deploy" {
   }
 }
 
-resource "aws_api_gateway_stage" "example" {
+resource "aws_api_gateway_stage" "app_stage" {
   deployment_id = aws_api_gateway_deployment.payment_apigateway_deploy.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.payment_app_apigateway_stage
