@@ -176,7 +176,14 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user2", "amount": 10, "currency": "USD", "email":"user2@abc.com"}'
 ```
 
-## 7) References
+## 7) Work in Progress
+ 
+ * API gateway deployment with terraform
+ * SNS deployment with terraform. And Sending the notification from Lambda code
+ * Cognito deployment with terraform
+
+
+## 8) References
 * [Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
 * [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 * [AWS Dynamodb](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)
@@ -189,9 +196,8 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 * [ACH APIs ](https://achbanking.com/apiDoc)
 * [AWS Architecture Icons](https://aws.amazon.com/architecture/icons)
 * [Free tool to draw architecture diagrams](https://app.diagrams.net)
+* [Request validation for REST APIs in API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html)
+* [IETF JSON Schema](https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04)
+* [Amazon API Gateway request validation](https://aws.amazon.com/blogs/compute/how-to-remove-boilerplate-validation-logic-in-your-rest-apis-with-amazon-api-gateway-request-validation/)
 
-## 8) Work in Progress
- 
- * API gateway deployment with terraform
- * SNS deployment with terraform. And Sending the notification from Lambda code
- * Cognito deployment with terraform
+
