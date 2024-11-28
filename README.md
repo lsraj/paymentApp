@@ -198,6 +198,6 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 * [Free tool to draw architecture diagrams](https://app.diagrams.net)
 * [Request validation for REST APIs in API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html)
 * [IETF JSON Schema](https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04)
-* [Amazon API Gateway request validation](https://aws.amazon.com/blogs/compute/how-to-remove-boilerplate-validation-logic-in-your-rest-apis-with-amazon-api-gateway-request-validation/)
+* [AWS Blog post - API Gateway request validation](https://aws.amazon.com/blogs/compute/how-to-remove-boilerplate-validation-logic-in-your-rest-apis-with-amazon-api-gateway-request-validation/)
 
 
