@@ -217,7 +217,6 @@ resource "aws_lambda_permission" "allow_api_gateway_customer" {
   principal     = "apigateway.amazonaws.com"
 }
 
-
 resource "aws_api_gateway_deployment" "payment_apigateway_deploy" {
 
   rest_api_id = aws_api_gateway_rest_api.api.id
@@ -257,4 +256,47 @@ resource "aws_api_gateway_stage" "app_stage" {
   deployment_id = aws_api_gateway_deployment.payment_apigateway_deploy.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.payment_app_apigateway_stage
+}
+
+# create IAM role for lambda
+resource "aws_iam_role" "pay_app_apigateway_role" {
+  name               = "PaymentAppAPIGatewayRole"
+  assume_role_policy = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": ["apigateway.amazonaws.com"]
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+  EOF
+}
+
+# allow API gateway to push logs to CloudWatch
+resource "aws_api_gateway_account" "pay_app_apigateway_account" {
+  cloudwatch_role_arn = aws_iam_role.pay_app_apigateway_role.arn
+}
+
+# attach cloudWatch policy to IAM role
+resource "aws_iam_role_policy_attachment" "pay_app_cloudwatch_log_policy" {
+  role       = aws_iam_role.pay_app_apigateway_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+ # enable all methods full request and response logs to cloudWatch
+ resource "aws_api_gateway_method_settings" "payapp_cloudwatch_logs" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = aws_api_gateway_stage.app_stage.stage_name
+  method_path = "*/*"
+
+  settings {
+    logging_level      = "INFO"
+    metrics_enabled    = true
+    data_trace_enabled = true
+  }
 }
