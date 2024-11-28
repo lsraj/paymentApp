@@ -1,6 +1,6 @@
 
 /*
-* Core resources required to integrate AWS  API Gateay with AWS Lambda are:
+* Core resources required to integrate AWS API Gateay with AWS Lambda are:
 * - aws_api_gateway_rest_api
 * - aws_api_gateway_resource
 * - aws_api_gateway_method
@@ -58,6 +58,7 @@ resource "aws_api_gateway_method" "post_customer" {
   resource_id   = aws_api_gateway_resource.v1_api_customer.id
   http_method   = "POST"
   authorization = "NONE"
+  request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   request_models = {
     "application/json" = aws_api_gateway_model.customer_request_model.name
@@ -73,6 +74,7 @@ resource "aws_api_gateway_method" "get_customer" {
   resource_id   = aws_api_gateway_resource.get_customer_id.id
   http_method   = "GET"
   authorization = "NONE"
+  request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   # TBD (Rajesham)
   # request_validator_id = aws_api_gateway_request_validator.id
@@ -94,6 +96,13 @@ resource "aws_api_gateway_method" "post_payments" {
   depends_on = [aws_api_gateway_model.payments_request_model]
 }
 
+resource "aws_api_gateway_request_validator" "req_validator" {
+  name                        = "RequestBodyValidator"
+  rest_api_id                 = aws_api_gateway_rest_api.api.id
+  validate_request_body       = true
+  validate_request_parameters = false
+}
+
 # define the request body model for /v1/api/customer
 resource "aws_api_gateway_model" "customer_request_model" {
   rest_api_id  = aws_api_gateway_rest_api.api.id
@@ -104,10 +113,18 @@ resource "aws_api_gateway_model" "customer_request_model" {
     "properties" : {
       "customer_id" : {
         "type" : "string"
+        "pattern" : "^[A-Za-z0-9]{8,20}$",
+        "minLength" : 8,
+        "maxLength" : 20
       },
       "email" : {
         "type" : "string",
-        "format" : "email"
+        "format" : "email",
+        "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        # example: a@b.c
+        "minLength" : 5,
+        # see RFC 5321 and RFC 5322
+        "maxLength" : 254
       }
     },
     "required" : ["customer_id", "email"]
@@ -123,18 +140,29 @@ resource "aws_api_gateway_model" "payments_request_model" {
     "type" : "object",
     "properties" : {
       "customer_id" : {
-        "type" : "string"
+        "type" : "string",
+        "pattern" : "^[A-Za-z0-9]{8,20}$",
+        "minLength" : 8,
+        "maxLength" : 20
       },
       "email" : {
         "type" : "string",
-        "format" : "email"
+        "format" : "email",
+        "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        # example: a@b.c
+        "minLength" : 5,
+        # see RFC 5321 and RFC 5322
+        "maxLength" : 254
       },
       "amount" : {
         "type" : "number",
-        "format" : "float"
+        "minimum" : 1,
+        "maximum" : 1000000
+
       },
       "currency" : {
-        "type" : "string"
+        "type" : "string",
+        "enum" : ["USD", "INR", "EUR", "JPY", "GBP"]
       }
     },
     "required" : ["customer_id", "email", "amount", "currency"]
