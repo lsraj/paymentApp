@@ -98,9 +98,11 @@ API Gateway sends this request to Lambda which processes the request by interact
 ├── deply
 │   ├── aws
 │   │   ├── README.md
+│   │   ├── apigateway.tf
 │   │   ├── dynamodb.tf
 │   │   ├── gotchas.txt
 │   │   ├── lambda.tf
+│   │   ├── outputs.tf
 │   │   ├── providers.tf
 │   │   ├── terraform.tf
 │   │   ├── terraform.tfvars
@@ -108,20 +110,24 @@ API Gateway sends this request to Lambda which processes the request by interact
 │   ├── azure
 │   └── gcp
 ├── gotchas.txt
-├── images
-│   └── payAppArchDiagram.png
-└── lambda
-    ├── aws-cli-lambda-test
-    │   ├── addCustomerTest.json
-    │   ├── getCustomerTest.json
-    │   ├── gotchas.txt
-    │   └── payCustomerTest.json
-    ├── build_lambda_zip.sh
-    ├── lambda_function.py
-    ├── paymentApp-lambda.zip
-    ├── requirements.txt
-    └── test_lambda_function.py
-
+── images
+│   └── payAppArchDiag.png
+├── lambda
+│   ├── aws-cli-lambda-test
+│   │   ├── addCustomerTest.json
+│   │   ├── getCustomerTest.json
+│   │   ├── gotchas.txt
+│   │   ├── output.txt
+│   │   └── payCustomerTest.json
+│   ├── build_lambda_zip.sh
+│   ├── lambda_function.py
+│   ├── paymentApp-lambda.zip
+│   ├── requirements.txt
+│   └── test_lambda_function.py
+└── tests
+    ├── functionalTests
+    │   └── payAppTest.py
+    └── soakTests
 ```
 
 ## 5) Infrastructure Deployment
