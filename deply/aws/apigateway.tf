@@ -152,7 +152,7 @@ resource "aws_api_gateway_model" "payments_request_model" {
       "email" : {
         "type" : "string",
         "format" : "email",
-        "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
         # example: a@b.c
         "minLength" : 5,
         # see RFC 5321 and RFC 5322
