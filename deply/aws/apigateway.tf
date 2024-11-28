@@ -15,6 +15,10 @@
 resource "aws_api_gateway_rest_api" "api" {
   name        = "paymentAppAPI"
   description = "API Gateway for paymentApp"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 # create resource /v1
