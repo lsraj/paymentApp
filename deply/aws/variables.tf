@@ -53,8 +53,8 @@ variable "payment_app_apigateway_stage" {
   default     = "dev"
 }
 
-variable "lambda_logs_retention_days" {
-  description = "Payement App Lambda Logs Retention period"
+variable "cloudwatch_logs_retention_days" {
+  description = "Payement App Logs Retention period"
   type        = number
   default     = 5
 }

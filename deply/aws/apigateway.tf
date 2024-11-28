@@ -256,6 +256,12 @@ resource "aws_api_gateway_stage" "app_stage" {
   deployment_id = aws_api_gateway_deployment.payment_apigateway_deploy.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.payment_app_apigateway_stage
+
+  /* TBD
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.pay_app_api_gateway_loggroup.arn
+  }
+  */
 }
 
 # create IAM role for lambda
@@ -287,6 +293,7 @@ resource "aws_iam_role_policy_attachment" "pay_app_cloudwatch_log_policy" {
   role       = aws_iam_role.pay_app_apigateway_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
+
 
  # enable all methods full request and response logs to cloudWatch
  resource "aws_api_gateway_method_settings" "payapp_cloudwatch_logs" {

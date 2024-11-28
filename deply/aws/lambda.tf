@@ -72,7 +72,7 @@ resource "aws_iam_policy" "dynamodb_access_policy" {
 # create cloudwatch logging group for lambda
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.payment_lambda.function_name}"
-  retention_in_days = var.lambda_logs_retention_days
+  retention_in_days = var.cloudwatch_logs_retention_days
 }
 
 #create IAM policy for lambda to send logs to cloudwatch
