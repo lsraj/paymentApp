@@ -38,44 +38,59 @@ API Gateway sends this request to Lambda which processes the request by interact
     * **POST on resource /v1/api/customer**: inserts customer_id and email into Customers table. API Gateway request body model:
       ```
       { 
-          "type": "object",
-          "properties": {
-               "customer_id": {
-                   "type": "string"
-               },
-              "email": {
-                  "type": "string",
-                  "format": "email"
+          "properties" : {
+              "customer_id" : {
+                  "type" : "string"
+                  "pattern" : "^[A-Za-z0-9]{8,20}$",
+                  "minLength" : 8,
+                  "maxLength" : 20
+              },
+              "email" : {
+                  "type" : "string",
+                  "format" : "email",
+                  "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                  "minLength" : 5,# example: a@b.c
+                  "maxLength" : 254 # see RFC 5321 and RFC 5322
               }
           },
-          "required": ["customer_id", "email"]
+          "required" : ["customer_id", "email"]
       }
+  
       ```
       
     * **GET on /v1/api/customer/{customer_id}**: Gets the customer record from Customers table.
       
     * **POST on /v1/api/payments**: Process the payment for a customer. Request body model in API Gateway:
      ```
-     {
-         "type": "object",
-         "properties": {
-             "customer_id": {
-                 "type": "string"
-             },
-             "email": {
-                 "type": "string",
-                 "format": "email"
-             },
-             "amount": {
-                 "type": "number",
-                 "format": "float"
-             },
-             "currency": {
-               "type": "string"
-             }
-          },
-          "required": ["customer_id", "email", "amount", "currency"]
-      }
+    {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9]{8,20}$",
+          "minLength": 8,
+          "maxLength": 20
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "pattern": "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+          "minLength": 5, # example: a@b.c
+          "maxLength": 254 # see RFC 5321 and RFC 5322
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["USD", "INR", "EUR", "JPY", "GBP"]
+        }
+      },
+      "required": ["customer_id", "email", "amount", "currency"]
+    }
+
      ```
 
     * **GET on /v1/api/payment/{customer_id}**: Gets the payment records of a customer.
