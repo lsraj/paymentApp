@@ -112,6 +112,8 @@ resource "aws_api_gateway_model" "customer_request_model" {
   rest_api_id  = aws_api_gateway_rest_api.api.id
   name         = "CustomerRequestModel"
   content_type = "application/json"
+
+  # see RFC 5321 and RFC 5322 for email specs/format and length
   schema = jsonencode({
     "type" : "object",
     "properties" : {
@@ -125,9 +127,7 @@ resource "aws_api_gateway_model" "customer_request_model" {
         "type" : "string",
         "format" : "email",
         "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-        # example: a@b.c
         "minLength" : 5,
-        # see RFC 5321 and RFC 5322
         "maxLength" : 254
       }
     },
@@ -140,6 +140,8 @@ resource "aws_api_gateway_model" "payments_request_model" {
   rest_api_id  = aws_api_gateway_rest_api.api.id
   name         = "PaymentsRequestModel"
   content_type = "application/json"
+
+  # see RFC 5321 and RFC 5322 for email specs/format and length
   schema = jsonencode({
     "type" : "object",
     "properties" : {
@@ -153,9 +155,7 @@ resource "aws_api_gateway_model" "payments_request_model" {
         "type" : "string",
         "format" : "email",
         "pattern" : "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-        # example: a@b.c
         "minLength" : 5,
-        # see RFC 5321 and RFC 5322
         "maxLength" : 254
       },
       "amount" : {
