@@ -37,7 +37,7 @@ API Gateway sends this request to Lambda which processes the request by interact
 2) API Gateway is hosted with 4 REST APIs as below:
     * **POST on resource /v1/api/customer**: inserts customer_id and email into Customers table. API Gateway request body model:
       ```
-       # see RFC 5321 and RFC 5322 for email specs/format
+      # see RFC 5321 and RFC 5322 for email specs/format
       { 
           "properties" : {
               "customer_id" : {
@@ -63,7 +63,7 @@ API Gateway sends this request to Lambda which processes the request by interact
       
     * **POST on /v1/api/payments**: Process the payment for a customer. Request body model in API Gateway:
      ```
-     # see RFC 5321 and RFC 5322 for email specs/format
+    # see RFC 5321 and RFC 5322 for email specs/format
     {
          "type": "object",
          "properties": {
