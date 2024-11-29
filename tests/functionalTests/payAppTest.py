@@ -4,32 +4,52 @@
 import requests
 import json
 
-AWS_API_GATEWAY_URL = "https://yyodyf7fsi.execute-api.us-east-2.amazonaws.com/dev/v1/api/customer"
+API_GATEWAY_BASE_URL = "https://yyodyf7fsi.execute-api.us-east-2.amazonaws.com/dev"
 
-# test /v1/api/customer
+def test_add_customer_success():
+    add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/customer'
+    for i in range(1, 11):
+        req_body = {}
+        req_body['customer_id'] = f'paypaluser{i}';
+        req_body['email'] = f'paypaluser{i}@example.com'
+        req_headers = {}
+        req_headers['Content-Type'] = 'application/json'
+        resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
+        assert resp.status_code == 200, f"expected 200 but got {resp.status_code}"
+        print(f"(paypaluser{i}, paypaluser{i}@example.com): statusCode: {resp.status_code}, {resp.json()}")
 
-def test_add_customer_success(customer_id, email, status_code_expected):
+def test_invalid_customer_id():
+    add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/customer'
     req_body = {}
-    req_body['customer_id'] = customer_id
-    req_body['email'] = email
+    req_body['email'] = f'paypaluser1@example.com'
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
-    resp = requests.post(AWS_API_GATEWAY_URL, json=req_body, headers=req_headers)
-    assert resp.status_code == status_code_expected, f"expected 200 but got {resp.status_code}"
-    print(f"({customer_id}, {email}) added. statusCode: {resp.status_code}, {resp.json()}")
-    # assert response.json() == expected_response, f"Expected {expected_response} but got {response.json()}"
+    invalid_customer_id_list = ["", "user1", "I told my computer I needed a break, and now it’s frozen",
+                                "paypaluse1@"]
+    for customer_id in invalid_customer_id_list:
+        req_body['customer_id'] =  customer_id
+        resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
+        assert resp.status_code == 400, f"expected 200 but got {resp.status_code}"
+        print(resp.json())
 
-def test_add_customer_empty_customer():
-    test_add_customer_success("", f"paypaluser1@example.com", 400)
-    test_add_customer_success("paypaluser1", "", 400)
+def test_invalid_customer_email():
+    add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/customer'
+    req_body = {}
+    req_body['customer_id'] = 'paypaluser1'
+    req_headers = {}
+    req_headers['Content-Type'] = 'application/json'
+    invalid_customer_email_list = ["", "a@bc", "a" * 64 + "@b" * 188 + ".com"]
+    for email in invalid_customer_email_list:
+        req_body['email'] =  email
+        resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
+        assert resp.status_code == 400, f"expected 200 but got {resp.status_code}"
+        print(resp.json())
 
-def add_customer():
-
-    # add 10 customers
-    for i in range(1, 11):
-        test_add_customer_success(f"paypaluser{i}", f"paypaluser{i}@example.com", 200)
-
-    test_add_customer_empty_customer()
+# POST request on /v1/api/customer
+def add_customer_tests():
+    test_add_customer_success()
+    test_invalid_customer_id()
+    test_invalid_customer_email()
 
 # test /v1/api/customer/{customer_id}
 def test_get_customer():
@@ -41,7 +61,7 @@ def test_pay_customer():
 
 
 def main():
-    add_customer()
+    add_customer_tests()
 
 if __name__ == "__main__":
     main()
