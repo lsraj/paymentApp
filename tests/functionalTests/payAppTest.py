@@ -96,7 +96,7 @@ def test_pay_customer():
     req_body = {}
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
-    # Note: quite interestingly paypal sandob url https://developer.paypal.com/docs/api/payments/v1
+    # Note: quite interestingly paypal sandbox url https://developer.paypal.com/docs/api/payments/v1
     # is not accepting JPY and INR.
     # currencies = ["USD", "INR", "EUR", "JPY", "GBP"]
     currencies = ["USD", "EUR", "GBP"]
