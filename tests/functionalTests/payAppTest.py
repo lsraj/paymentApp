@@ -3,6 +3,7 @@
 
 import requests
 import json
+import random
 
 API_GATEWAY_BASE_URL = "https://<apigatewayid>.execute-api.us-east-2.amazonaws.com/test"
 
@@ -11,13 +12,13 @@ def test_add_customer_success():
     Send valid customer_id and email to API Gateway POST method on /v1/api/customer.
     The requests passes through API Gateway, Lambda and into dynamodb.
     '''
+    req_body = {}
+    req_headers = {}
+    req_headers['Content-Type'] = 'application/json'
     add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/customer'
     for i in range(1, 11):
-        req_body = {}
         req_body['customer_id'] = f'paypaluser{i}';
         req_body['email'] = f'paypaluser{i}@example.com'
-        req_headers = {}
-        req_headers['Content-Type'] = 'application/json'
         resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
         assert resp.status_code == 200, f"expected 200 but got {resp.status_code}"
         # print(f"(paypaluser{i}, paypaluser{i}@example.com): statusCode: {resp.status_code}, {resp.json()}")
@@ -35,7 +36,7 @@ def test_invalid_customer_id():
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
 
-    # send invalid customer_id variations such as empty, long, and invalid characters.
+    # invalid customer_id variations such as empty, long, and invalid characters.
     invalid_customer_id_list = [
         "",
         "user1", "I told my computer I needed a break, and now it’s frozen",
@@ -61,7 +62,7 @@ def test_invalid_customer_email():
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
 
-    # send invalid email variations such as empty, long, and invalid characters.
+    # invalid email variations such as empty, long, and invalid characters.
     invalid_customer_email_list = [
         "",
         "a@bc",
@@ -87,11 +88,34 @@ def test_get_customer():
 
 # test /v1/api/payments
 def test_pay_customer():
-    pass
+    '''
+    Test API Gateway POST method on /v1/api/payments.
+    The requests passes through API Gateway, Lambda and into dynamodb.
+    '''
+    add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/payments'
+    req_body = {}
+    req_headers = {}
+    req_headers['Content-Type'] = 'application/json'
+    # Note: quite interestingly paypal sandob url https://developer.paypal.com/docs/api/payments/v1
+    # is not accepting JPY and INR.
+    # currencies = ["USD", "INR", "EUR", "JPY", "GBP"]
+    currencies = ["USD", "EUR", "GBP"]
+    for i in range(1, 11):
+        req_body['customer_id'] = f'paypaluser{i}';
+        req_body['email'] = f'paypaluser{i}@example.com'
+        # generate random number between 1 and 1M and round the value to 2 decimal places.
+        req_body['amount'] = round(random.uniform(1, 1000000), 2)
+        req_body['currency'] = random.choice(currencies)
+        # print(f"debug {req_body}")
+        resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
+        assert resp.status_code == 200, f"expected 200 but got {resp.status_code}"
+        # print(f"(paypaluser{i}, paypaluser{i}@example.com): statusCode: {resp.status_code}, {resp.json()}")
+    print(f"test_pay_customer() PASSED")
 
 
 def main():
     add_customer_tests()
+    test_pay_customer()
 
 if __name__ == "__main__":
     main()
