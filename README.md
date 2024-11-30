@@ -209,7 +209,7 @@ curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/
 * https://developer.paypal.com/docs/api/payments/v1 does support only limited currencies. I tried with ["USD", "INR", "EUR", "JPY", "GBP"] and found that ["USD", "EUR", "GBP"] supported
  and ["INR", "JPY"] not supported.
 
-## 8) References
+## 9) References
 * [Amazon API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
 * [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)
 * [AWS Dynamodb](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)
