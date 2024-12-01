@@ -58,10 +58,10 @@ resource "aws_api_gateway_resource" "v1_api_payments" {
 
 # create POST method on /v1/api/customer
 resource "aws_api_gateway_method" "post_customer" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.v1_api_customer.id
-  http_method   = "POST"
-  authorization = "NONE"
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  resource_id          = aws_api_gateway_resource.v1_api_customer.id
+  http_method          = "POST"
+  authorization        = "NONE"
   request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   request_models = {
@@ -74,10 +74,10 @@ resource "aws_api_gateway_method" "post_customer" {
 
 # create GET method on /v1/api/customer/{customer_id}
 resource "aws_api_gateway_method" "get_customer" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.get_customer_id.id
-  http_method   = "GET"
-  authorization = "NONE"
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  resource_id          = aws_api_gateway_resource.get_customer_id.id
+  http_method          = "GET"
+  authorization        = "NONE"
   request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   # TBD (Rajesham)
@@ -251,9 +251,17 @@ resource "aws_api_gateway_deployment" "payment_apigateway_deploy" {
     ]))
   }
 
+  # To minimize the downtime: create updated deployment before destroying existing one.
   lifecycle {
     create_before_destroy = true
   }
+
+  # these resources must be created before deployment
+  depends_on = [
+    aws_api_gateway_integration.customer_integration,
+    aws_api_gateway_integration.customer_id_integration,
+    aws_api_gateway_integration.payments_integration
+  ]
 }
 
 resource "aws_api_gateway_stage" "app_stage" {
@@ -299,8 +307,8 @@ resource "aws_iam_role_policy_attachment" "pay_app_cloudwatch_log_policy" {
 }
 
 
- # enable all methods full request and response logs to cloudWatch
- resource "aws_api_gateway_method_settings" "payapp_cloudwatch_logs" {
+# enable all methods full request and response logs to cloudWatch
+resource "aws_api_gateway_method_settings" "payapp_cloudwatch_logs" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name  = aws_api_gateway_stage.app_stage.stage_name
   method_path = "*/*"
