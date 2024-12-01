@@ -45,6 +45,8 @@ def add_customer(event, context):
     customer_id = body.get('customer_id', '').strip()
     customer_email = body.get('email', '').strip()
     api_resp = {}
+    api_resp['headers'] = {}
+    api_resp['headers']['Content-Type'] = 'application/json'
 
     # sanitise params
     if not customer_id or not customer_email:
@@ -63,10 +65,18 @@ def add_customer(event, context):
         customer_table = dynamodb.Table('Customers')
         put_item_resp = customer_table.put_item(Item=customer_record)
         api_resp['statusCode'] = put_item_resp['ResponseMetadata']['HTTPStatusCode']
-        api_resp['body'] = json.dumps({'message': f'{customer_id} added successfully'})
+        api_resp['body'] = json.dumps({
+            'message': 'customer added successfully',
+            'customer_id' : customer_id,
+            'email': customer_email,
+            })
     except ClientError as e:
         api_resp['statusCode'] = 500
-        api_resp['body'] = json.dumps({'message': f"Error occurred: {e.response['Error']['Message']}"})
+        # Never send e.response['Error']['Message'] to clients, because it may contain
+        # sensitive information such as AWS Account number. Instead, log to CloudWatch
+        # for debugging purposes and send generic error to clients.
+        print(f"add_customer() error: {e.response['Error']['Message']}")
+        api_resp['body'] = json.dumps({'message' : 'Internal server error'})
 
     return api_resp
 
@@ -99,8 +109,12 @@ def get_customer(event, context):
             api_resp['statusCode'] = 404
             api_resp['body'] = json.dumps({'message' : f'{customer_id} not in records'})
     except ClientError as e:
-            api_resp['statusCode'] = 500
-            api_resp['body'] = json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
+        api_resp['statusCode'] = 500
+        # Never send e.response['Error']['Message'] to clients, because it may contain
+        # sensitive information such as AWS Account number. Instead, log to CloudWatch
+        # for debugging purposes and send generic error to clients.
+        print(f"get_customer() error: {e.response['Error']['Message']}")
+        api_resp['body'] = json.dumps({'message' : 'Internal server error'})
 
     print(f'api_resp: {api_resp}')
     return api_resp
@@ -143,7 +157,11 @@ def process_payment(event, context):
             item_found = True
     except ClientError as e:
         api_resp['statusCode'] = 500
-        api_resp['body'] = json.dumps({'message' : f"error occurred: {e.response['Error']['Message']}"})
+        # Never send e.response['Error']['Message'] to clients, because it may contain
+        # sensitive information such as AWS Account number. Instead, log to CloudWatch
+        # for debugging purposes and send generic error to clients.
+        print(f"process_payment() error: {e.response['Error']['Message']}")
+        api_resp['body'] = json.dumps({'message' : 'Internal server error'})
 
     if not item_found:
         return api_resp
@@ -235,7 +253,11 @@ def process_payment(event, context):
     except ClientError as e:
         api_resp = {}
         api_resp['statusCode'] = 500
-        api_resp['body'] = json.dumps({'message' : f"Error occurred: {e.response['Error']['Message']}"})
+        # Never send e.response['Error']['Message'] to clients, because it may contain
+        # sensitive information such as AWS Account number. Instead, log to CloudWatch
+        # for debugging purposes and send generic error to clients.
+        print(f"process_payment() error: {e.response['Error']['Message']}")
+        api_resp['body'] = json.dumps({'message' : 'Internal server error'})
 
     return api_resp
 
