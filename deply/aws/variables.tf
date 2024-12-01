@@ -58,3 +58,13 @@ variable "cloudwatch_logs_retention_days" {
   type        = number
   default     = 5
 }
+
+variable "payApp_username" {
+  type      = string
+  sensitive = true
+}
+
+variable "payApp_password" {
+  type      = string
+  sensitive = true
+}

@@ -61,7 +61,8 @@ resource "aws_api_gateway_method" "post_customer" {
   rest_api_id          = aws_api_gateway_rest_api.api.id
   resource_id          = aws_api_gateway_resource.v1_api_customer.id
   http_method          = "POST"
-  authorization        = "NONE"
+  authorization        = "COGNITO_USER_POOLS"
+  authorizer_id        = aws_api_gateway_authorizer.payApp_authorizer.id
   request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   request_models = {
@@ -77,7 +78,8 @@ resource "aws_api_gateway_method" "get_customer" {
   rest_api_id          = aws_api_gateway_rest_api.api.id
   resource_id          = aws_api_gateway_resource.get_customer_id.id
   http_method          = "GET"
-  authorization        = "NONE"
+  authorization        = "COGNITO_USER_POOLS"
+  authorizer_id        = aws_api_gateway_authorizer.payApp_authorizer.id
   request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
   # TBD (Rajesham)
@@ -92,7 +94,8 @@ resource "aws_api_gateway_method" "post_payments" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.v1_api_payments.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.payApp_authorizer.id
 
   request_models = {
     "application/json" = aws_api_gateway_model.payments_request_model.name
@@ -184,6 +187,7 @@ resource "aws_api_gateway_integration" "customer_integration" {
   # integration (AWS_PROXY), the HTTP method API Gateway uses to call Lambda
   # is always POST, regardless of the method (e.g., GET, POST, PUT, etc.) you
   # define for the resource.
+
   integration_http_method = "POST"
 
   type = "AWS_PROXY"
@@ -247,7 +251,8 @@ resource "aws_api_gateway_deployment" "payment_apigateway_deploy" {
       aws_api_gateway_method.post_payments.id,
       aws_api_gateway_integration.customer_integration.id,
       aws_api_gateway_integration.customer_id_integration.id,
-      aws_api_gateway_integration.payments_integration.id
+      aws_api_gateway_integration.payments_integration.id,
+      aws_api_gateway_authorizer.payApp_authorizer.id
     ]))
   }
 
