@@ -3,14 +3,13 @@ import boto3
 from botocore.exceptions import ClientError
 import os
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
 def lambda_handler(event, context):
     """
     Lambda handler function to route based on resource paths and HTTP methods.
     """
-
     # extract resource path and API method from the event object
     resource_path = event.get('resource', '')
     http_method = event.get('httpMethod', '')
@@ -39,11 +38,9 @@ def lambda_handler(event, context):
 
 
 def add_customer(event, context):
-
     """
     process POST method on /v1/api/customer to add a new customer.
     """
-
     body = json.loads(event['body'])
     customer_id = body.get('customer_id', '').strip()
     customer_email = body.get('email', '').strip()
@@ -75,7 +72,6 @@ def add_customer(event, context):
 
 
 def get_customer(event, context):
-
     """
     process GET method on /v1/api/customer/{customer_id} to retrieve a customer record.
     """
@@ -111,11 +107,9 @@ def get_customer(event, context):
 
  
 def process_payment(event, context):
-
     """
     process POST method on /v1/api/payments to process payment to a customer.
     """
-
     body = json.loads(event['body'])
     customer_id = body.get('customer_id', '')
     email = body.get('email', '')
@@ -123,6 +117,9 @@ def process_payment(event, context):
     currency = body.get('currency', 'USD')
 
     api_resp = {}
+    api_resp['headers'] = {}
+    api_resp['headers']['Content-Type'] = 'application/json'
+
     if not customer_id or not email:
         api_resp['statusCode'] = 400
         api_resp['body'] = json.dumps({'message': 'customer_id and email required'})
@@ -151,11 +148,14 @@ def process_payment(event, context):
     if not item_found:
         return api_resp
 
-    access_token = get_access_token()
+    access_token, resp_code, resp_text = get_access_token()
     if access_token is None:
-        print(f"failed to get PayPal API OAuth token")
-        api_resp['statusCode'] = 500
-        api_resp['body'] = json.dumps({'message' : 'error : failed to get PayPal API OAuth token'})
+        print(f"failed to get PayPal API OAuth token: status code - {resp_code}, error : {resp_text}")
+        api_resp['statusCode'] = resp_code
+        api_resp['body'] = json.dumps({
+            'message' : 'failed to get PayPal API OAuth token',
+            'paypal_error': json.loads(resp_text)
+        })
         return api_resp
 
     paypal_base_url = os.environ['PAYPAL_SANDBOX_URL']
@@ -163,10 +163,17 @@ def process_payment(event, context):
     paypal_req_headers = {}
     paypal_req_headers['Authorization'] = f'Bearer {access_token}'
     paypal_req_headers['Content-Type'] = 'application/json'
+
+       # TBD - make this as request param
+    payment_method = "paypal"
+
+    # TBD - make this as request param
+    intent = "authorize"
+
     paypal_req = {
-        "intent": "authorize",
+        "intent": intent,
         "payer": {
-            "payment_method": "paypal"
+            "payment_method": payment_method
         },
         "transactions": [{
             "amount": {
@@ -188,18 +195,24 @@ def process_payment(event, context):
     paypal_resp = requests.post(paypal_url, json=paypal_req, headers=paypal_req_headers)
 
     if paypal_resp.status_code in [200, 201]:
-        print('Payment Authorization created successfully.')
+        print(f"Payment Authorization created successfully: {paypal_resp}, {paypal_resp.status_code}, {paypal_resp.text}")
     else:
-        print(f"Failed to process payment: status code = {paypal_resp.status_code}, message: {paypal_resp.text}")
         api_resp['statusCode'] = paypal_resp.status_code
-        api_resp['body'] = json.dumps({'message' : f'error : payment failed for {customer_id} - {paypal_resp.text}'})
+        api_resp['body'] = json.dumps({
+            'message' : f'payment authorization failed for {customer_id}',
+            'paypal_error': json.loads(paypal_resp.text)
+        })
+        print(f"DEBUG - {api_resp}")
         return api_resp
+
+    # TBD - make this uniqueue
+    payment_id = datetime.now(timezone.utc).isoformat() + "Z"
 
     # Store payment record in DynamoDB
     payment_record = {
         'customer_id': customer_id,
         'email': email,
-        'payment_id': datetime.utcnow().isoformat() + "Z",
+        'payment_id': payment_id,
         'amount': str(amount),
         'payment_method': 'paypal',
         'status': 'Completed',
@@ -209,9 +222,16 @@ def process_payment(event, context):
     try:
         disbursement_table = dynamodb.Table('Disbursements')
         resp = disbursement_table.put_item(Item=payment_record)
-        print(f"disbursement table put resp code: {resp['ResponseMetadata']['HTTPStatusCode']}")
         api_resp['statusCode'] = resp['ResponseMetadata']['HTTPStatusCode']
-        api_resp['body'] = json.dumps({'message' : f'{customer_id} payment successful'})
+        api_resp['body'] = json.dumps({
+            'message' : f'{customer_id} payment authorization successful',
+            'customer_id' : customer_id,
+            'email': email,
+            'amount' : amount,
+            'currency' : currency,
+            'payment_id' : payment_id
+            })
+
     except ClientError as e:
         api_resp = {}
         api_resp['statusCode'] = 500
@@ -241,7 +261,7 @@ def get_access_token():
 
     if response.status_code in [200, 201]:
         access_token = response.json()['access_token']
-        return access_token
+        return access_token, 200, None
     else:
         print(f"Failed to get access token: {response.status_code} {response.text}")
-        return None
+        return None, response.status_code, response.text
