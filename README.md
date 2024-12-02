@@ -116,6 +116,7 @@ API Gateway sends this request to Lambda which processes the request by interact
 │   ├── aws
 │   │   ├── README.md
 │   │   ├── apigateway.tf
+│   │   ├── cognito.tf
 │   │   ├── dynamodb.tf
 │   │   ├── gotchas.txt
 │   │   ├── lambda.tf
