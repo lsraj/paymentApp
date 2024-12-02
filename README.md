@@ -216,9 +216,8 @@ def test_add_customer_success():
 
 ## 7) Work in Progress
  
- * API gateway deployment with terraform
  * SNS deployment with terraform. And Sending the notification from Lambda code
- * Cognito deployment with terraform
+
 
 ## 8) Notes from Testing
 * https://developer.paypal.com/docs/api/payments/v1 does support only limited currencies. I tried with ["USD", "INR", "EUR", "JPY", "GBP"] and found that ["USD", "EUR", "GBP"] supported
