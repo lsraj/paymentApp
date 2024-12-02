@@ -5,10 +5,10 @@ output "api_gateway_url" {
 }
 
 output "user_pool_id" {
-  value = "${aws_cognito_user_pool.payApp_user_pool.id}"
+  value = aws_cognito_user_pool.payApp_user_pool.id
 }
 
 output "client_id" {
- value = "${aws_cognito_user_pool_client.payApp_userpool_client}"
- sensitive = true
+  value     = aws_cognito_user_pool_client.payApp_userpool_client
+  sensitive = true
 }
