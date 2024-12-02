@@ -187,18 +187,31 @@ $
 
 ## 6) Testing
 
-curl or python requests module or postman can be used for testing. I will be scripting detailed tests with python requests module soon.
+curl or python requests module or postman can be used for testing. Please see ```tests/functionalTests/payAppTest.py``` for detailed testing.
 
 ```
-curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/customer -d '{"customer_id": "user1", "email": "user1@abc.com"}'
+def test_add_customer_success():
+    '''
+    Send valid customer_id and email to API Gateway POST method on /v1/api/customer.
+    The requests passes through API Gateway, Lambda and into dynamodb.
+    '''
+    req_body = {}
+    req_headers = {}
+    req_headers['Content-Type'] = 'application/json'
+    auth_token = get_cognito_auth_token()
+    if auth_token is None:
+        print(f"test_add_customer_success() FAILED. cognito auth token not found")
+        return
+    req_headers['Authorization'] = f"Bearer {auth_token}"
+    add_customer_url = f'{API_GATEWAY_BASE_URL}/v1/api/customer'
+    for i in range(1, 11):
+        req_body['customer_id'] = f'paypaluser{i}';
+        req_body['email'] = f'paypaluser{i}@example.com'
+        resp = requests.post(add_customer_url, json=req_body, headers=req_headers)
+        assert resp.status_code == 200, f"expected 200 but got {resp.status_code}"
+        # print(f"(paypaluser{i}, paypaluser{i}@example.com): statusCode: {resp.status_code}, {resp.json()}")
+    print(f"test_add_customer_success() PASSED")
 
-curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/customer  -d '{"customer_id": "user2", "email": "user2@abc.com"}'
-
-curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/customer  -d '{"customer_id": "user3", "email": "user3@abc.com"}'
-
-curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user1", "amount": 10, "currency": "USD", "email":"user11@abc.com"}'
-
-curl -X POST https://6uld4n6xw7.execute-api.us-east-2.amazonaws.com/test/v1/api/payments -d '{"customer_id": "user2", "amount": 10, "currency": "USD", "email":"user2@abc.com"}'
 ```
 
 ## 7) Work in Progress
