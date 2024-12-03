@@ -13,6 +13,7 @@ import os
 load_dotenv()
 
 API_GATEWAY_BASE_URL = os.getenv("API_GATEWAY_BASE_URL")
+X_API_KEY = os.getenv("X-API-KEY")
 
 def get_cognito_auth_token():
     user_pool_id = os.getenv("USER_POOL_ID")
@@ -45,6 +46,8 @@ def test_add_customer_success():
     req_body = {}
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
+    if X_API_KEY:
+        req_headers['x-api-key'] = X_API_KEY
     auth_token = get_cognito_auth_token()
     if auth_token is None:
         print(f"test_add_customer_success() FAILED. cognito auth token not found")
@@ -70,6 +73,8 @@ def test_invalid_customer_id():
     req_body['email'] = f'paypaluser1@example.com'
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
+    if X_API_KEY:
+        req_headers['x-api-key'] = X_API_KEY
     auth_token = get_cognito_auth_token()
     if auth_token is None:
         print(f"test_invalid_customer_id() FAILED. cognito auth token not found")
@@ -101,6 +106,8 @@ def test_invalid_customer_email():
     req_body['customer_id'] = 'paypaluser1'
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
+    if X_API_KEY:
+        req_headers['x-api-key'] = X_API_KEY
     auth_token = get_cognito_auth_token()
     if auth_token is None:
         print(f"test_invalid_customer_email() FAILED. cognito auth token not found")
@@ -141,6 +148,8 @@ def test_pay_customer():
     req_body = {}
     req_headers = {}
     req_headers['Content-Type'] = 'application/json'
+    if X_API_KEY:
+        req_headers['x-api-key'] = X_API_KEY
     auth_token = get_cognito_auth_token()
     if auth_token is None:
         print(f"test_pay_customer() FAILED. cognito auth token not found")

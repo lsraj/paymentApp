@@ -67,7 +67,7 @@ resource "aws_api_gateway_method" "post_customer" {
 
   # API key requirement for rate limit
   request_parameters = {
-    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
+    "method.request.header.x-api-key" = var.enable_rate_limit
   }
   api_key_required = var.enable_rate_limit
 
@@ -92,7 +92,7 @@ resource "aws_api_gateway_method" "get_customer" {
   # request_validator_id = aws_api_gateway_request_validator.id
   request_parameters = {
     "method.request.path.customer_id" = true # customer_id is required in path
-    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
+    "method.request.header.x-api-key" = var.enable_rate_limit
   }
   api_key_required = var.enable_rate_limit
 }
@@ -107,7 +107,7 @@ resource "aws_api_gateway_method" "post_payments" {
 
   # API key requirement for rate limit
   request_parameters = {
-    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
+    "method.request.header.x-api-key" = var.enable_rate_limit
   }
   api_key_required = var.enable_rate_limit
 
