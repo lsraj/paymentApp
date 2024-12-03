@@ -1,74 +1,26 @@
-# Terraform cheatseet
+# Lambda concepts
 
-Terraform is a powerful tool for managing infrastructure as code. Here are some basic commands that are essential for using Terraform:
+Here are the important AWS Lambda concepts that one must know.
 
-1. `terraform init`
+## Timeout
 
-    - Purpose: Initializes a new or existing Terraform configuration directory. It downloads the necessary provider plugins and sets up the working directory.
-    - Usage: `terraform init`
+Any Lambda function has a defined timeout. That is, the maximum amount of time the Lambda function can run. If it reaches a logical end before that, it’s successful. That means that it terminates the processing and exits with the timeout error.
 
+This timeout is a safety feature to avoid problems if a logical error in the code or an external dependency keeps the code running forever.
 
-2. `terraform plan`
+The default value of this timeout is three seconds. That’s also the minimum possible value for the timeout. We can specify a higher value for up to 15 minutes.
 
-    - Purpose: Creates an execution plan, which shows what actions Terraform will take to achieve the desired state defined in your configuration files. It helps to preview changes before applying them.
-    - Usage: `terraform plan`
-
-
-3. `terraform apply`
-
-    - Purpose: Applies the changes required to reach the desired state of the configuration. It creates or updates resources based on the execution plan.
-    - Usage: `terraform apply`
+Whatever the configured timeout value, the Lambda function is billed only for the actual runtime in milliseconds.
 
 
-4. `terraform destroy`
+## Memory
 
-    - Purpose: Destroys the resources managed by Terraform. It removes all the resources defined in your configuration files.
-    - Usage: `terraform destroy`
+Lambda memory refers to the RAM available to the code running in the Lambda function. Note that AWS bills us for the RAM provisioned, regardless of the actual usage. That said, we should provide just enough RAM to ensure minimal cost.
 
+We always have a trade-off between the RAM and the execution time. Choking the RAM can increase the computation time, and a generous RAM can make it faster. Therefore, it’s essential to choose the optimal combination of the two to ensure low latency and cost.
 
-5. `terraform validate`
+## Concurrency
 
-    - Purpose: Validates the configuration files for syntax and internal consistency. It checks if the configuration is valid and will work with the current version of Terraform.
-    - Usage: `terraform validate`
+Each account has a maximum limit on the number of Lambda functions that can run simultaneously. However, this limit is soft, and a simple request to AWS can extend it.
 
-
-6. `terraform fmt`
-
-    - Purpose: Formats the Terraform configuration files to a canonical format and style. This helps keep the code consistent and readable.
-    - Usage: `terraform fmt`
-
-
-7. `terraform show`
-
-    - Purpose: Displays the current state or a plan in a human-readable format. It can be used to inspect the state file or see the results of terraform plan.
-    - Usage: `terraform show`
-
-
-8. `terraform output`
-
-    - Purpose: Extracts the values of output variables from the Terraform state file. Useful for retrieving information that other configurations or scripts might need.
-    - Usage: `terraform output`
-
-
-9. `terraform refresh`
-
-    - Purpose: Updates the state file with the latest information from the infrastructure. This is useful if you suspect that the state file and the real-world infrastructure are out of sync.
-    - Usage: `terraform refresh`
-
-
-10. `terraform state`
-
-    - Purpose: Provides various subcommands to interact with the state file, such as listing resources, moving resources, or removing resources from the state.
-    - Usage: `terraform state <subcommand>`
-
-
-11. `terraform taint`
-
-    - Purpose: Marks a resource for recreation during the next terraform apply. It is used to force the recreation of a resource if it's known to be in a bad state.
-    - Usage: `terraform taint <resource>`
-
-
-12. `terraform untaint`:
-
-    - Purpose: Removes the "tainted" status from a resource, which prevents it from being recreated during the next terraform apply.
-    - Usage: `terraform untaint <resource>`
+By default, the limit is 1000 concurrent Lambda executions. All functions in the account share this limit defined in the account. However, we can reserve part of it for a given Lambda function.
