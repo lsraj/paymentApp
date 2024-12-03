@@ -240,5 +240,6 @@ def test_add_customer_success():
 * [IETF JSON Schema](https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04)
 * [AWS Blog post - API Gateway request validation](https://aws.amazon.com/blogs/compute/how-to-remove-boilerplate-validation-logic-in-your-rest-apis-with-amazon-api-gateway-request-validation/)
 * [Lambda proxy integrations in API Gateway Request Response format](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)
+* [Fake Store API - Pseudo-real data for your e-commerce or shopping website](https://fakestoreapi.com)
 
 
