@@ -65,6 +65,12 @@ resource "aws_api_gateway_method" "post_customer" {
   authorizer_id        = aws_api_gateway_authorizer.payApp_authorizer.id
   request_validator_id = aws_api_gateway_request_validator.req_validator.id
 
+  # API key requirement for rate limit
+  request_parameters = {
+    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
+  }
+  api_key_required = var.enable_rate_limit
+
   request_models = {
     "application/json" = aws_api_gateway_model.customer_request_model.name
   }
@@ -86,7 +92,9 @@ resource "aws_api_gateway_method" "get_customer" {
   # request_validator_id = aws_api_gateway_request_validator.id
   request_parameters = {
     "method.request.path.customer_id" = true # customer_id is required in path
+    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
   }
+  api_key_required = var.enable_rate_limit
 }
 
 # create POST Method on /v1/api/payments
@@ -96,6 +104,12 @@ resource "aws_api_gateway_method" "post_payments" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.payApp_authorizer.id
+
+  # API key requirement for rate limit
+  request_parameters = {
+    "method.request.header.x-rate-limit-api-key" = var.enable_rate_limit
+  }
+  api_key_required = var.enable_rate_limit
 
   request_models = {
     "application/json" = aws_api_gateway_model.payments_request_model.name
@@ -322,5 +336,10 @@ resource "aws_api_gateway_method_settings" "payapp_cloudwatch_logs" {
     logging_level      = "INFO"
     metrics_enabled    = true
     data_trace_enabled = true
+    /*
+    # this rate limiting applies to all methods in the stage_name
+    throttling_rate_limit = 500  # requests per second
+    throttling_burst_limit = 1000  # Allows up to 1000 requests in a burst
+    */
   }
 }

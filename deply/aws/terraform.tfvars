@@ -14,3 +14,5 @@ WCU = 5
 payment_app_apigateway_stage = "dev"
 
 cloudwatch_logs_retention_days = 5
+
+enable_rate_limit = false
