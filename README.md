@@ -241,5 +241,7 @@ def test_add_customer_success():
 * [AWS Blog post - API Gateway request validation](https://aws.amazon.com/blogs/compute/how-to-remove-boilerplate-validation-logic-in-your-rest-apis-with-amazon-api-gateway-request-validation/)
 * [Lambda proxy integrations in API Gateway Request Response format](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)
 * [Fake Store API - Pseudo-real data for e-commerce or shopping website](https://fakestoreapi.com)
+* [Apache Velocity Template Language](https://velocity.apache.org/engine/devel/vtl-reference.html)
+* [API Gateway mapping template and access logging variable reference](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)
 
 
