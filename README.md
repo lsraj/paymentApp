@@ -243,5 +243,3 @@ def test_add_customer_success():
 * [Fake Store API - Pseudo-real data for e-commerce or shopping website](https://fakestoreapi.com)
 * [Apache Velocity Template Language](https://velocity.apache.org/engine/devel/vtl-reference.html)
 * [API Gateway mapping template and access logging variable reference](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)
-
-
