@@ -14,7 +14,7 @@ A simple payment app developed with AWS managed services:
 8) **IAM**: For IAM roles.
 
 
-![Alt text](images/payAppArchDiag-v3.png?raw=true "Architecture Digram")
+![Alt text](images/payAppArchDiag-v4.png?raw=true "Architecture Digram")
 
 
 ## 2) Payment Workflow Example
